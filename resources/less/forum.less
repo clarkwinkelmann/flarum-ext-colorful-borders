@@ -1,0 +1,50 @@
+.ColorfulBorders {
+    display: inline;
+
+    .Dropdown-menu {
+        width: 300px;
+        padding: 10px;
+        color: @muted-color;
+    }
+}
+
+.ColorfulBorders-Title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.ColorfulBorders-Option {
+    margin-bottom: 10px;
+    display: flex;
+
+    .ColorfulBorders-Option-Control {
+        margin-left: 10px;
+        flex-grow: 1;
+    }
+}
+
+.ColorfulBorders-ColorChoice {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: 2px;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+
+    &:not(:first-child) {
+        margin-left: 5px;
+    }
+
+    &:hover {
+        border-color: #ccc;
+    }
+
+    &.selected {
+        border-color: red;
+    }
+}
+
+.CommentPost {
+    border: transparent 5px solid;
+}

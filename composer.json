@@ -1,0 +1,38 @@
+{
+    "name": "clarkwinkelmann/flarum-ext-colorful-borders",
+    "description": "Mess up with each individual post styling",
+    "keywords": [
+        "flarum"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "require": {
+        "flarum/core": ">=0.1.0-beta.12 <0.1.0-beta.14",
+        "ext-json": "*"
+    },
+    "authors": [
+        {
+            "name": "Clark Winkelmann",
+            "email": "clark.winkelmann@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "ClarkWinkelmann\\ColorfulBorders\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Colorful Borders",
+            "icon": {
+                "name": "fas fa-palette",
+                "backgroundColor": "#c42130",
+                "color": "#fff"
+            }
+        },
+        "flagrow": {
+            "discuss": "https://discuss.flarum.org/d/23303"
+        }
+    }
+}
