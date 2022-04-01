@@ -1,6 +1,6 @@
-import {extend} from 'flarum/extend';
-import Model from 'flarum/Model';
-import Store from 'flarum/Store';
+import {extend} from 'flarum/common/extend';
+import Model from 'flarum/common/Model';
+import Store from 'flarum/common/Store';
 
 function checkAndSave(data, record) {
     // We only save when the colorfulBordersStyle attribute is present alone

@@ -1,29 +1,23 @@
-import app from 'flarum/app';
-import BaseModal from 'flarum/components/SettingsModal';
-import Switch from 'flarum/components/Switch';
-
-/* global m */
+import {Vnode} from 'mithril';
+import app from 'flarum/admin/app';
+import ExtensionPage from 'flarum/admin/components/ExtensionPage';
+import Switch from 'flarum/common/components/Switch';
 
 const settingsPrefix = 'colorful-borders.';
 const translationPrefix = 'clarkwinkelmann-colorful-borders.admin.settings.';
 
-export default class SettingsModal extends BaseModal {
-    title() {
-        return app.translator.trans(translationPrefix + 'title');
-    }
-
-    colorOption(enableKey, valueKey, enabledDefault) {
+export default class SettingsPage extends ExtensionPage {
+    colorOption(enableKey: string, valueKey: string, enabledDefault: string) {
         const value = this.setting(settingsPrefix + valueKey, 'simple')();
 
         return [
             m('.Form-group', [
                 Switch.component({
                     state: this.setting(settingsPrefix + enableKey, enabledDefault)() === '1',
-                    onchange: value => {
+                    onchange: (value: boolean) => {
                         this.setting(settingsPrefix + enableKey)(value ? '1' : '0');
                     },
-                    children: app.translator.trans(translationPrefix + enableKey),
-                }),
+                }, app.translator.trans(translationPrefix + enableKey)),
             ]),
             m('.Form-group.ColorfulBorders-Subgroup', [
                 m('label', [
@@ -66,16 +60,15 @@ export default class SettingsModal extends BaseModal {
         ];
     }
 
-    rangeOption(enableKey, valueKey, placeholderMin) {
+    rangeOption(enableKey: string, valueKey: string, placeholderMin: string) {
         return [
             m('.Form-group', [
                 Switch.component({
                     state: this.setting(settingsPrefix + enableKey, '1')() === '1',
-                    onchange: value => {
+                    onchange: (value: boolean) => {
                         this.setting(settingsPrefix + enableKey)(value ? '1' : '0');
                     },
-                    children: app.translator.trans(translationPrefix + enableKey),
-                }),
+                }, app.translator.trans(translationPrefix + enableKey)),
             ]),
             m('.Form-group.ColorfulBorders-Subgroup.ColorfulBorders-MinMax', [
                 m('div', [
@@ -104,13 +97,14 @@ export default class SettingsModal extends BaseModal {
         ];
     }
 
-    form() {
-        return [
+    content(vnode: Vnode) {
+        return m('.ExtensionPage-settings', m('.container', [
             this.colorOption('enableBorderColor', 'borderColors', '1'),
             this.colorOption('enableBackgroundColor', 'backgroundColors', '0'),
             this.colorOption('enableTextColor', 'textColors', '0'),
             this.rangeOption('enableBorderWidth', 'borderWidth', '1'),
             this.rangeOption('enableBorderRadius', 'borderRadius', '0'),
-        ];
+            m('.Form-group', this.submitButton(vnode)),
+        ]));
     }
 }

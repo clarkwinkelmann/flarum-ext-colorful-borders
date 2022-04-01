@@ -1,5 +1,4 @@
-import {extend} from 'flarum/extend';
-import app from 'flarum/app';
+import app from 'flarum/forum/app';
 import saveOriginalStyling from './saveOriginalStyling';
 import stylePosts from './stylePosts';
 

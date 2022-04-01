@@ -3,13 +3,11 @@
 namespace ClarkWinkelmann\ColorfulBorders\Access;
 
 use Flarum\Post\Post;
-use Flarum\User\AbstractPolicy;
+use Flarum\User\Access\AbstractPolicy;
 use Flarum\User\User;
 
 class PostPolicy extends AbstractPolicy
 {
-    protected $model = Post::class;
-
     public function editColorfulBordersStyle(User $actor, Post $post)
     {
         return $this->editOwn($actor, $post) || $this->editAny($actor);

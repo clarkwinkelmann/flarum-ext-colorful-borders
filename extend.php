@@ -2,8 +2,11 @@
 
 namespace ClarkWinkelmann\ColorfulBorders;
 
+use Flarum\Api\Serializer\ForumSerializer;
+use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Extend;
-use Illuminate\Contracts\Events\Dispatcher;
+use Flarum\Post\Event\Saving;
+use Flarum\Post\Post;
 
 return [
     (new Extend\Frontend('forum'))
@@ -16,11 +19,15 @@ return [
 
     new Extend\Locales(__DIR__ . '/resources/locale'),
 
-    new Extenders\ForumAttributes(),
-    new Extenders\PostAttributes(),
-    new Extenders\SavePostStyle(),
+    (new Extend\ApiSerializer(ForumSerializer::class))
+        ->attributes(ForumAttributes::class),
 
-    function (Dispatcher $dispatcher) {
-        $dispatcher->subscribe(Access\PostPolicy::class);
-    },
+    (new Extend\ApiSerializer(PostSerializer::class))
+        ->attributes(PostAttributes::class),
+
+    (new Extend\Event())
+        ->listen(Saving::class, Listener\SavePostStyle::class),
+
+    (new Extend\Policy())
+        ->modelPolicy(Post::class, Access\PostPolicy::class),
 ];

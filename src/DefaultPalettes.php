@@ -4,7 +4,7 @@ namespace ClarkWinkelmann\ColorfulBorders;
 
 class DefaultPalettes
 {
-    public static function backgroundColors()
+    public static function backgroundColors(): array
     {
         return [
             '#f4f4f2', // Very light grey
@@ -15,7 +15,7 @@ class DefaultPalettes
         ];
     }
 
-    public static function borderColors()
+    public static function borderColors(): array
     {
         return [
             '#f32501', // Red
@@ -27,7 +27,7 @@ class DefaultPalettes
         ];
     }
 
-    public static function textColors()
+    public static function textColors(): array
     {
         return [
             '#ffffff', // White

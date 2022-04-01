@@ -1,18 +1,20 @@
-import app from 'flarum/app';
-import Component from 'flarum/Component';
-import Button from 'flarum/components/Button';
-import icon from 'flarum/helpers/icon';
-
-/* global m */
+import {Children, Vnode} from 'mithril';
+import app from 'flarum/forum/app';
+import Component, {ComponentAttrs} from 'flarum/common/Component';
+import Button from 'flarum/common/components/Button';
+import Post from 'flarum/common/models/Post';
+import icon from 'flarum/common/helpers/icon';
 
 const translationPrefix = 'clarkwinkelmann-colorful-borders.forum.';
 
-export default class Editor extends Component {
-    init() {
-        this.loading = false;
-    }
+interface EditorAttrs extends ComponentAttrs {
+    resource: Post
+}
 
-    option(key, styleKey, children) {
+export default class Editor extends Component<EditorAttrs> {
+    loading: boolean = false;
+
+    option(key: string, styleKey: string, children: Children) {
         return [
             m('.ColorfulBorders-Title', app.translator.trans(translationPrefix + key)),
             m('.ColorfulBorders-Option', [
@@ -32,7 +34,7 @@ export default class Editor extends Component {
         ];
     }
 
-    colorOption(key, styleKey) {
+    colorOption(key: string, styleKey: string) {
         const colors = app.forum.attribute('colorful-borders.' + key + 's');
 
         return this.option(key, styleKey, Array.isArray(colors) ? m('.ColorfulBorders-Option-Control', colors.map(color => m('.ColorfulBorders-ColorChoice', {
@@ -46,13 +48,13 @@ export default class Editor extends Component {
         }))) : m('input.ColorfulBorders-Option-Control', {
             type: 'color',
             value: this.getStyle(styleKey),
-            onchange: e => {
-                this.setStyle(styleKey, e.target.value);
+            onchange: (event: Event) => {
+                this.setStyle(styleKey, (event.target as HTMLInputElement).value);
             },
         }));
     }
 
-    rangeOption(key) {
+    rangeOption(key: string) {
         const min = app.forum.attribute('colorful-borders.' + key + 'Min');
         const max = app.forum.attribute('colorful-borders.' + key + 'Max');
 
@@ -75,8 +77,8 @@ export default class Editor extends Component {
             min,
             max,
             value: parseInt(this.getStyle(key)), // parseInt() will remove the "px" suffix
-            oninput: e => {
-                this.setStyle(key, e.target.value + 'px');
+            oninput: (event: Event) => {
+                this.setStyle(key, (event.target as HTMLInputElement).value + 'px');
             },
         }));
     }
@@ -91,12 +93,11 @@ export default class Editor extends Component {
                 app.translator.trans(translationPrefix + 'edit'),
             ]),
             m('.Dropdown-menu', {
-                // Using config and not onclick so we don't trigger unnecessary Mithril redraws
-                config(element, isInitialized) {
-                    if (isInitialized) return;
-
-                    element.addEventListener('click', event => event.stopPropagation());
-                },
+                onclick(event: Event) {
+                    // Prevent dropdown closing on click
+                    event.stopPropagation();
+                    event.redraw = false;
+                }
             }, [
                 app.forum.attribute('colorful-borders.enableBorderColor') ? this.colorOption('borderColor', 'borderColor') : null,
                 app.forum.attribute('colorful-borders.enableBackgroundColor') ? this.colorOption('backgroundColor', 'backgroundColor') : null,
@@ -110,8 +111,8 @@ export default class Editor extends Component {
                     onclick: () => {
                         this.loading = true;
 
-                        this.props.resource.save({
-                            colorfulBordersStyle: this.props.resource.attribute('colorfulBordersStyle'),
+                        this.attrs.resource.save({
+                            colorfulBordersStyle: this.attrs.resource.attribute('colorfulBordersStyle'),
                         }).then(() => {
                             this.loading = false;
                             m.redraw();
@@ -121,16 +122,15 @@ export default class Editor extends Component {
                             throw e;
                         });
                     },
-                    children: app.translator.trans(translationPrefix + 'apply'),
-                }),
+                }, app.translator.trans(translationPrefix + 'apply')),
                 Button.component({
                     className: 'Button Button--block',
-                    disabled: this.props.resource.attribute('savedColorfulBordersStyle') === null,
+                    disabled: this.attrs.resource.attribute('savedColorfulBordersStyle') === null,
                     loading: this.loading,
                     onclick: () => {
                         this.loading = true;
 
-                        this.props.resource.save({
+                        this.attrs.resource.save({
                             colorfulBordersStyle: null,
                         }).then(() => {
                             this.loading = false;
@@ -141,30 +141,29 @@ export default class Editor extends Component {
                             throw e;
                         });
                     },
-                    children: app.translator.trans(translationPrefix + 'reset'),
-                }),
+                }, app.translator.trans(translationPrefix + 'reset')),
             ]),
         ]);
     }
 
     isDirty() {
-        return JSON.stringify(this.props.resource.data.attributes.colorfulBordersStyle) !== JSON.stringify(this.props.resource.data.attributes.savedColorfulBordersStyle);
+        return JSON.stringify(this.attrs.resource.data.attributes.colorfulBordersStyle) !== JSON.stringify(this.attrs.resource.data.attributes.savedColorfulBordersStyle);
     }
 
-    config(isInitialized) {
-        if (isInitialized) return;
+    oncreate(vnode: Vnode) {
+        super.oncreate(vnode);
 
         this.$().on('hide.bs.dropdown', () => {
             // Restore previous style
             if (this.isDirty()) {
-                this.props.resource.data.attributes.colorfulBordersStyle = this.props.resource.data.attributes.savedColorfulBordersStyle;
+                this.attrs.resource.data.attributes.colorfulBordersStyle = this.attrs.resource.data.attributes.savedColorfulBordersStyle;
                 m.redraw();
             }
         });
     }
 
-    getStyle(key) {
-        const style = this.props.resource.attribute('colorfulBordersStyle');
+    getStyle(key: string) {
+        const style: any = this.attrs.resource.attribute('colorfulBordersStyle');
 
         if (!style) {
             return null;
@@ -177,8 +176,8 @@ export default class Editor extends Component {
         return style[key];
     }
 
-    setStyle(key, value) {
-        let style = this.props.resource.attribute('colorfulBordersStyle');
+    setStyle(key: string, value: string | null) {
+        let style: any = this.attrs.resource.attribute('colorfulBordersStyle');
 
         if (!style) {
             style = {};
@@ -192,6 +191,6 @@ export default class Editor extends Component {
 
         // We don't use .pushAttributes() because that would also update the saved copy
         // But we only want to store the value temporarily to have a live preview
-        this.props.resource.data.attributes.colorfulBordersStyle = style;
+        this.attrs.resource.data.attributes.colorfulBordersStyle = style;
     }
 }
