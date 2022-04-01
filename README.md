@@ -51,6 +51,12 @@ This extension requires **MySQL 5.7.8+ or MariaDB 10.2.7+** due to the use of th
 
     composer require clarkwinkelmann/flarum-ext-colorful-borders
 
+## Support
+
+This extension is provided as a technical demonstration and is not intended to be used in production.
+
+There is no support and no guarantee of any future bugfix or compatibility update.
+
 ## Links
 
 - [GitHub](https://github.com/clarkwinkelmann/flarum-ext-colorful-borders)
