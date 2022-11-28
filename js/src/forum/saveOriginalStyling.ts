@@ -1,13 +1,13 @@
 import {extend} from 'flarum/common/extend';
-import Model from 'flarum/common/Model';
+import Model, {ModelData} from 'flarum/common/Model';
 import Store from 'flarum/common/Store';
 
-function checkAndSave(data, record) {
+function checkAndSave(data: ModelData | undefined, record: Model) {
     // We only save when the colorfulBordersStyle attribute is present alone
     // If the savedColorfulBordersStyle properly is present it must mean an error occurred and Model.save()
     // is restoring the old attributes. When this happens we want to keep the old saved value as well so we skip this
     if (data && data.attributes && data.attributes.hasOwnProperty('colorfulBordersStyle') && !data.attributes.hasOwnProperty('savedColorfulBordersStyle')) {
-        record.data.attributes.savedColorfulBordersStyle = JSON.parse(JSON.stringify(data.attributes.colorfulBordersStyle));
+        record.data.attributes!.savedColorfulBordersStyle = JSON.parse(JSON.stringify(data.attributes.colorfulBordersStyle));
     }
 }
 
@@ -22,6 +22,6 @@ export default function () {
     });
 
     extend(Model.prototype, 'pushData', function (returned, data) {
-        checkAndSave(data, this);
+        checkAndSave(data as ModelData, this);
     });
 }

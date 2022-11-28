@@ -76,7 +76,7 @@ export default class Editor extends Component<EditorAttrs> {
             type: 'range',
             min,
             max,
-            value: parseInt(this.getStyle(key)), // parseInt() will remove the "px" suffix
+            value: parseInt(this.getStyle(key) || '0'), // parseInt() will remove the "px" suffix
             oninput: (event: Event) => {
                 this.setStyle(key, (event.target as HTMLInputElement).value + 'px');
             },
@@ -116,6 +116,7 @@ export default class Editor extends Component<EditorAttrs> {
                         }).then(() => {
                             this.loading = false;
                             m.redraw();
+                            // @ts-ignore dropdown plugin not type-hinted
                             this.$('.Dropdown-toggle').dropdown('toggle');
                         }).catch(e => {
                             this.loading = false;
@@ -135,6 +136,7 @@ export default class Editor extends Component<EditorAttrs> {
                         }).then(() => {
                             this.loading = false;
                             m.redraw();
+                            // @ts-ignore dropdown plugin not type-hinted
                             this.$('.Dropdown-toggle').dropdown('toggle');
                         }).catch(e => {
                             this.loading = false;
@@ -147,7 +149,7 @@ export default class Editor extends Component<EditorAttrs> {
     }
 
     isDirty() {
-        return JSON.stringify(this.attrs.resource.data.attributes.colorfulBordersStyle) !== JSON.stringify(this.attrs.resource.data.attributes.savedColorfulBordersStyle);
+        return JSON.stringify(this.attrs.resource.data.attributes!.colorfulBordersStyle) !== JSON.stringify(this.attrs.resource.data.attributes!.savedColorfulBordersStyle);
     }
 
     oncreate(vnode: Vnode) {
@@ -156,14 +158,14 @@ export default class Editor extends Component<EditorAttrs> {
         this.$().on('hide.bs.dropdown', () => {
             // Restore previous style
             if (this.isDirty()) {
-                this.attrs.resource.data.attributes.colorfulBordersStyle = this.attrs.resource.data.attributes.savedColorfulBordersStyle;
+                this.attrs.resource.data.attributes!.colorfulBordersStyle = this.attrs.resource.data.attributes!.savedColorfulBordersStyle;
                 m.redraw();
             }
         });
     }
 
     getStyle(key: string) {
-        const style: any = this.attrs.resource.attribute('colorfulBordersStyle');
+        const style = this.attrs.resource.attribute<{ [key: string]: string }>('colorfulBordersStyle');
 
         if (!style) {
             return null;
@@ -177,7 +179,7 @@ export default class Editor extends Component<EditorAttrs> {
     }
 
     setStyle(key: string, value: string | null) {
-        let style: any = this.attrs.resource.attribute('colorfulBordersStyle');
+        let style = this.attrs.resource.attribute<{ [key: string]: string }>('colorfulBordersStyle');
 
         if (!style) {
             style = {};
@@ -191,6 +193,6 @@ export default class Editor extends Component<EditorAttrs> {
 
         // We don't use .pushAttributes() because that would also update the saved copy
         // But we only want to store the value temporarily to have a live preview
-        this.attrs.resource.data.attributes.colorfulBordersStyle = style;
+        this.attrs.resource.data.attributes!.colorfulBordersStyle = style;
     }
 }

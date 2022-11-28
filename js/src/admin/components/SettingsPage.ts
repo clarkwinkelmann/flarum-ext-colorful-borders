@@ -1,4 +1,3 @@
-import {Vnode} from 'mithril';
 import app from 'flarum/admin/app';
 import ExtensionPage from 'flarum/admin/components/ExtensionPage';
 import Switch from 'flarum/common/components/Switch';
@@ -97,14 +96,14 @@ export default class SettingsPage extends ExtensionPage {
         ];
     }
 
-    content(vnode: Vnode) {
+    content() {
         return m('.ExtensionPage-settings', m('.container', [
             this.colorOption('enableBorderColor', 'borderColors', '1'),
             this.colorOption('enableBackgroundColor', 'backgroundColors', '0'),
             this.colorOption('enableTextColor', 'textColors', '0'),
             this.rangeOption('enableBorderWidth', 'borderWidth', '1'),
             this.rangeOption('enableBorderRadius', 'borderRadius', '0'),
-            m('.Form-group', this.submitButton(vnode)),
+            m('.Form-group', this.submitButton()),
         ]));
     }
 }

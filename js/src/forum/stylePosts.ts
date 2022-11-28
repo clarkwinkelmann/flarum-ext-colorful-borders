@@ -15,8 +15,8 @@ export default function () {
         this.subtree.check(() => JSON.stringify(this.attrs.post.attribute('colorfulBordersStyle')));
     });
 
-    extend(CommentPost.prototype, 'elementAttrs', function (attrs) {
-        const style = this.attrs.post.attribute('colorfulBordersStyle');
+    extend(CommentPost.prototype, 'elementAttrs', function (attrs: any) {
+        const style = this.attrs.post.attribute<{ [key: string]: string }>('colorfulBordersStyle');
 
         if (!style) {
             return;
